@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div class="toast z-10">
-    <div class="alert" :class="`alert-${status}`">
+    <div :class="`alert alert-${status}`">
       <span>{{ message }} {{ status }}</span>
     </div>
   </div>
