@@ -13,6 +13,7 @@ import AdminUserList from '@/views/admin/user/ListView.vue'
 import AdminUserUpdate from '@/views/admin/user/UpdateView.vue'
 
 import Home from '@/views/user/HomeView.vue'
+import Search from '@/views/user/SearchView.vue'
 import Profile from '@/views/user/ProfileView.vue'
 import Success from '@/views/user/SuccessView.vue'
 import Checkout from '@/views/user/CheckoutView.vue'
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: Search
     },
     {
       path: '/profile',

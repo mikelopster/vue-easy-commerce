@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useUserProductStore = defineStore('user-product', {
   state: () => ({
-    list: []
+    list: [],
+    loaded: false
   }),
   actions: {
     loadProduct () {
@@ -10,6 +11,13 @@ export const useUserProductStore = defineStore('user-product', {
       if (productList) {
         this.list = JSON.parse(productList)
       }
+      this.loaded = true
+    },
+    filterProducts (searchName) {
+      if (!this.loaded) {
+        this.loadProduct()
+      }
+      return this.list.filter(product => product.name.includes(searchName))
     }
   }
 })

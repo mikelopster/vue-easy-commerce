@@ -6,6 +6,7 @@ import { useUserProductStore } from '@/stores/user/product'
 import { useUserCartStore } from '@/stores/user/cart'
 
 import UserLayout from '@/layouts/UserLayout.vue'
+import ProductList from '@/components/ProductList.vue'
 
 const userProductStore = useUserProductStore()
 const userCartStore = useUserCartStore()
@@ -32,19 +33,10 @@ const addToCart = (productData) => {
         </div>
       </div>
     </div>
-    <div class="grid grid-cols-4 gap-6 m-10">
-      <div v-for="(product, index) in userProductStore.list" class="card w-full bg-base-100 shadow-xl" :key="index">
-        <figure>
-          <img class="w-full" :src="product.imageUrl" alt="Shoes" />
-        </figure>
-        <div class="card-body">
-          <h2 class="card-title">{{ product.name }}</h2>
-          <p>{{ product.about }}</p>
-          <div class="card-actions justify-end">
-            <button @click="addToCart(product)" class="btn btn-primary">Buy Now</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ProductList
+      :products="userProductStore.list"
+      :addToCart="addToCart"
+    >
+    </ProductList>
   </UserLayout>
 </template>

@@ -5,17 +5,21 @@ import RightIcon from '@/components/icons/Right.vue'
 import CloseIcon from '@/components/icons/Close.vue'
 
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUserCartStore } from '@/stores/user/cart'
 
 const userCartStore = useUserCartStore()
-
-const summaryPrice = computed(() => {
-  return userCartStore.items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-})
+const router = useRouter()
 
 const changeQuantity = (event, index) => {
   userCartStore.updateQuantity(index, event.target.value)
+}
+
+const removeItemInCart = (index) => {
+  userCartStore.removeItemInCart(index)
+  if (userCartStore.items.length === 0) {
+    router.push({ name: 'home' })
+  }
 }
 </script>
 
@@ -25,7 +29,10 @@ const changeQuantity = (event, index) => {
       <h1 class="text-4xl mb-4">Shopping cart</h1>
       <div class="flex">
         <section class="flex-auto w-64">
-          <ul class="px-8 bg-base-200">
+          <div v-if="userCartStore.items.length === 0" class="px-8 py-32 bg-base-200">
+            Cart is empty
+          </div>
+          <ul v-else class="px-8 bg-base-200">
             <li v-for="(item, index) in userCartStore.items" class="flex w-full py-10" :key="index">
               <div class="shrink-0">
                 <img class="w-48" :src="item.imageUrl">
@@ -42,7 +49,7 @@ const changeQuantity = (event, index) => {
                       <option disabled selected>Quantity</option>
                       <option v-for="quantity in [1,2,3,4,5]">{{ quantity }}</option>
                     </select>
-                    <div class="absolute top-0 right-0">
+                    <div @click="removeItemInCart(index)" class="absolute top-0 right-0 cursor-pointer">
                       <CloseIcon class="w-5"></CloseIcon>
                     </div>
                   </div>
@@ -60,7 +67,7 @@ const changeQuantity = (event, index) => {
           <div class="mt-4 m-0 divide-y divide-base-200">
             <div class="flex align-middle justify-between mb-2">
               <div class="font-bold">ราคาสินค้าทั้งหมด</div>
-              <div>{{ summaryPrice }}</div>
+              <div>{{ userCartStore.summaryPrice }}</div>
             </div>
             <div class="flex align-middle justify-between mb-2">
               <div class="font-bold">ค่าส่ง</div>
@@ -68,7 +75,7 @@ const changeQuantity = (event, index) => {
             </div>
             <div class="flex align-middle justify-between mb-2">
               <div class="font-bold">ราคาทั้งสิ้น</div>
-              <div>{{ summaryPrice }}</div>
+              <div>{{ userCartStore.summaryPrice }}</div>
             </div>
             <RouterLink to="/checkout" class="btn btn-primary w-full">
               ชำระเงิน

@@ -1,5 +1,38 @@
 <script setup>
-import UserLayout from "@/layouts/UserLayout.vue";
+import UserLayout from '@/layouts/UserLayout.vue'
+
+import { computed, reactive } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { useUserCartStore } from '@/stores/user/cart'
+
+const checkoutForm = [
+  {
+    name: 'Email Address',
+    field: 'email'
+  },
+  {
+    name: 'Name',
+    field: 'name'
+  },
+  {
+    name: 'Address',
+    field: 'address'
+  },
+  {
+    name: 'Note',
+    field: 'note'
+  }
+]
+
+const userCartStore = useUserCartStore()
+const userCheckoutData = reactive({})
+const router = useRouter()
+
+const checkout = () => {
+  // submit checkout data
+  userCartStore.checkout(userCheckoutData)
+  router.push({ name: 'success' })
+}
 </script>
 
 <template>
@@ -10,48 +43,49 @@ import UserLayout from "@/layouts/UserLayout.vue";
         <section class="flex-auto w-64 bg-base-200">
           <div class="px-8 py-2">
             <div
-              v-for="item in ['Email address', 'Name', 'Address', 'Note']"
+              v-for="form in checkoutForm"
               class="form-control w-full"
             >
               <label class="label">
-                <span class="label-text">{{ item }}</span>
+                <span class="label-text">{{ form.name }}</span>
               </label>
 
               <textarea
-                v-if="item === 'Address'"
+                v-if="form.field === 'address'"
                 class="textarea textarea-bordered h-24"
-                placeholder="Bio"
+                placeholder="Address"
+                v-model="userCheckoutData[form.field]"
               ></textarea>
               <input
                 v-else
                 type="text"
                 placeholder="Type here"
                 class="input input-bordered input-sm w-full"
+                v-model="userCheckoutData[form.field]"
               />
             </div>
-            <RouterLink to="/success" class="btn btn-primary w-full mt-4">
-              ชำระเงิน 199
-            </RouterLink>
+            <button class="btn btn-primary w-full mt-4" @click="checkout()">
+              ชำระเงิน
+            </button>
           </div>
         </section>
         <section class="flex-auto w-32 bg-slate-200">
           <div class="px-8">
             <ul>
-              <li v-for="items in [1, 2, 3]" class="px-2 flex py-6">
+              <li v-for="(item, index) in userCartStore.items" class="px-2 flex py-6" :key="index">
                 <img
                   class="w-40 object-cover object-center"
-                  src="https://fastly.picsum.photos/id/1025/300/300.jpg?hmac=4Y_I-JXDyweKiXCJHr7qYyF8RwfblAka9dd1ooCY1fY"
+                  :src="item.imageUrl"
                 />
                 <div class="flex flex-col justify-between ml-4">
                   <div>
-                    <div>Product name</div>
-                    <div>จำนวน: 1</div>
+                    <div>{{ item.name }}</div>
+                    <div>จำนวน: {{ item.quantity }}</div>
                   </div>
                   <div class="flex mt-2">
-                    <button>Edit</button>
-                    <div class="ml-2 pl-2 border-l-4 border-indigo-500">
-                      <button>Remove</button>
-                    </div>
+                    <RouterLink :to="{ name: 'cart' }">
+                      <button>Edit</button>
+                    </RouterLink>
                   </div>
                 </div>
               </li>
@@ -62,7 +96,7 @@ import UserLayout from "@/layouts/UserLayout.vue";
               <div class="mt-4 m-0">
                 <div class="flex align-middle justify-between mb-2">
                   <div class="font-bold">ราคาสินค้าทั้งหมด</div>
-                  <div>199</div>
+                  <div>{{ userCartStore.summaryPrice }}</div>
                 </div>
                 <div class="flex align-middle justify-between mb-2">
                   <div class="font-bold">ค่าส่ง</div>
@@ -71,7 +105,7 @@ import UserLayout from "@/layouts/UserLayout.vue";
                 <div class="divider"></div>
                 <div class="flex align-middle justify-between mb-2">
                   <div class="font-bold">ราคาทั้งสิ้น</div>
-                  <div>199</div>
+                  <div>{{ userCartStore.summaryPrice }}</div>
                 </div>
               </div>
             </div>

@@ -1,5 +1,15 @@
 <script setup>
+import { onMounted, ref } from 'vue'
+import { useUserCartStore } from '@/stores/user/cart'
 import UserLayout from '@/layouts/UserLayout.vue'
+
+const userCartStore = useUserCartStore()
+const checkoutData = ref({})
+
+onMounted(() => {
+  userCartStore.loadCheckout()
+  checkoutData.value = userCartStore.checkout
+})
 </script>
 
 <template>
@@ -15,40 +25,39 @@ import UserLayout from '@/layouts/UserLayout.vue'
       <div class="flex justify-between">
         <div>
           <div class="font-bold">Order date</div>
-          <div>18 Aug 2023</div>
+          <div>{{ checkoutData.createdAt }}</div>
         </div>
         <div>
           <div class="font-bold">Order Number</div>
-          <div>ABC00222</div>
+          <div>{{ checkoutData.orderNumber }}</div>
         </div>
         <div>
           <div class="font-bold">Payment method</div>
-          <div>Credit card</div>
+          <div>{{ checkoutData.paymentMethod }}</div>
         </div>
         <div>
           <div class="font-bold">Address</div>
-          <div>11/22 นนทบุรี ...</div>
+          <div>{{ checkoutData.address }}</div>
         </div>
       </div>
       <div class="divider"></div>
-      <!-- order สินค้าทั้งหมด -->
-      <div class="flex items-center">
+      <div v-for="product in checkoutData.products" class="flex items-center">
         <div>
           <img class="w-48" src="https://fastly.picsum.photos/id/1025/300/300.jpg?hmac=4Y_I-JXDyweKiXCJHr7qYyF8RwfblAka9dd1ooCY1fY">
         </div>
         <div class="flex-1 ml-4">
-          <div class="font-bold">Product name</div>
-          <div>Product description</div>
+          <div class="font-bold">{{ product.name }}</div>
+          <div>{{ product.about }}</div>
         </div>
-        <div class="flex-1">จำนวน 1</div>
-        <div>199 B</div>
+        <div class="flex-1">จำนวน {{ product.quantity }}</div>
+        <div>{{ product.price * product.quantity }} ฿</div>
       </div>
       <div class="divider"></div>
       <!-- order ราคาทั้งหมด -->
       <div class="mt-4 m-0">
         <div class="flex align-middle justify-between mb-2">
           <div class="font-bold">ราคาสินค้าทั้งหมด</div>
-          <div>199</div>
+          <div>{{ checkoutData.totalPrice }}</div>
         </div>
         <div class="flex align-middle justify-between mb-2">
           <div class="font-bold">ค่าส่ง</div>
@@ -58,7 +67,7 @@ import UserLayout from '@/layouts/UserLayout.vue'
       <div class="divider"></div>
       <div class="flex align-middle justify-between mb-2">
         <div class="font-bold">ราคาทั้งสิ้น</div>
-        <div>199</div>
+        <div>{{ checkoutData.totalPrice }}</div>
       </div>
        <!-- order ราคารวมทั้งสิ้น -->
       <div class="divider"></div>
