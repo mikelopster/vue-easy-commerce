@@ -1,6 +1,10 @@
 <script setup>
-import AdminLayout from '@/layouts/AdminLayout.vue'
+import { useOrderStore } from '@/stores/admin/order'
 import { RouterLink } from 'vue-router'
+
+import AdminLayout from '@/layouts/AdminLayout.vue'
+
+const orderStore = useOrderStore()
 </script>
 
 <template>
@@ -24,15 +28,21 @@ import { RouterLink } from 'vue-router'
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr v-for="(order, index) in orderStore.list" :key="index">
                   <td>
-                    <div class="font-bold">Michael</div>
+                    <div class="font-bold">
+                      {{ order.customerName }}
+                    </div>
                   </td>
-                  <td>25000 ฿</td>
-                  <td><div class="badge">Payment Complete</div></td>
-                  <td>12 Aug 23 04:00</td>
+                  <td>{{ order.totalPrice }} ฿</td>
                   <td>
-                    <RouterLink :to="{ name: 'admin-order-detail', params: { id: 1 }}">
+                    <div class="badge">
+                      {{ order.status }}
+                    </div>
+                  </td>
+                  <td>{{ order.updatedAt }}</td>
+                  <td>
+                    <RouterLink :to="{ name: 'admin-order-detail', params: { id: index }}">
                       <button class="btn">
                         See detail
                       </button>

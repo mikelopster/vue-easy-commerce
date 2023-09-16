@@ -24,6 +24,7 @@ const donutOption = {
 
 <template>
   <AdminLayout>
+    <h1 class="text-4xl mb-4">Dashboard</h1>
     <div class="flex mb-4">
       <div class="stats w-full shadow">
         <div class="stat">

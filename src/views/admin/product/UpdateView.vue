@@ -22,7 +22,7 @@ let selectedProduct = reactive({
 })
 
 const mode = computed(() => {
-  return productId.value !== -1 ? 'Edit' : 'Add' 
+  return productId.value !== -1 ? 'Edit' : 'Add'
 })
 
 onMounted(() => {
@@ -48,7 +48,7 @@ const updateProduct = () => {
 
 <template>
   <AdminLayout>
-    <div class="flex-1 pt-8 px-6">
+    <div class="flex pt-8 px-6">
       <div class="card w-full p-6 bg-base-100 shadow-xl mt-2">
         <div class="text-xl font-semibold">{{ mode }} Product</div>
         <div class="divider mt-2"></div>
@@ -119,7 +119,7 @@ const updateProduct = () => {
           </div>
           <div class="mt-4 flex justify-end">
             <RouterLink to="/admin/products" class="btn btn-ghost">
-              Back 
+              Back
             </RouterLink>
             <button @click="updateProduct()" class="btn btn-primary ml-4">
               {{ mode }}

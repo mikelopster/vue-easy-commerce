@@ -26,7 +26,7 @@ export const useProductStore = defineStore('product', {
       this.list[index].quantity = productData.quantity
       this.list[index].remainQuantity = productData.quantity
       this.list[index].status = productData.status
-      this.list[index].updatedAt = (new Date()).toLocaleDateString()
+      this.list[index].updatedAt = (new Date).toLocaleString()
       // save to localstorage
       localStorage.setItem('product-data', JSON.stringify(this.list))
     },
