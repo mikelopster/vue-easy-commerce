@@ -1,12 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserCartStore } from '@/stores/user/cart'
 
 const searchText = ref('')
+const isLoggedIn = ref(false)
+
 const router = useRouter()
 
 const userCartStore = useUserCartStore()
+
+onMounted(() => {
+  if (localStorage.getItem('login')) {
+    isLoggedIn.value = true
+  }
+})
 
 const handleEnter = (event) => {
   if (event.key === 'Enter') {
@@ -17,6 +25,19 @@ const handleEnter = (event) => {
       }
     })
   }
+}
+
+const login = () => {
+  isLoggedIn.value = true
+  localStorage.setItem('login', true)
+}
+
+const logout = () => {
+  isLoggedIn.value = false
+  localStorage.removeItem('login')
+  localStorage.removeItem('cart-item')
+  localStorage.removeItem('checkout-data')
+  window.location.reload()
 }
 </script>
 
@@ -55,7 +76,10 @@ const handleEnter = (event) => {
             </div>
           </div>
         </div>
-        <div class="dropdown dropdown-end">
+        <div v-if="!isLoggedIn" class="btn btn-ghost" @click="login">
+          Login
+        </div>
+        <div v-else class="dropdown dropdown-end">
           <label tabindex="0" class="btn btn-ghost btn-circle avatar">
             <div class="w-10 rounded-full">
               <img src="https://mikelopster.dev/mikelopster.da6b9a03.webp" />
@@ -67,7 +91,9 @@ const handleEnter = (event) => {
                 Profile
               </RouterLink>
             </li>
-            <li><a>Logout</a></li>
+            <li>
+              <a @click="logout">Logout</a>
+            </li>
           </ul>
         </div>
       </div>
