@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="grid grid-cols-4 gap-6 m-10">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 m-10">
     <div v-for="(product, index) in products" class="card w-full bg-base-100 shadow-xl" :key="index">
       <figure>
         <img class="w-full" :src="product.imageUrl" alt="Shoes" />
