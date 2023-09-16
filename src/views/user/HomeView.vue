@@ -1,7 +1,25 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { useUserProductStore } from '@/stores/user/product'
+import { useUserCartStore } from '@/stores/user/cart'
+
 import UserLayout from '@/layouts/UserLayout.vue'
 
-import { RouterLink } from 'vue-router'
+const userProductStore = useUserProductStore()
+const userCartStore = useUserCartStore()
+
+const router = useRouter()
+
+onMounted(() => {
+  userProductStore.loadProduct()
+})
+
+const addToCart = (productData) => {
+  userCartStore.addToCart(productData)
+  router.push({ name: 'cart' })
+}
 </script>
 
 <template>
@@ -9,22 +27,21 @@ import { RouterLink } from 'vue-router'
     <div class="hero min-h-screen bg-base-200">
       <div class="hero-content text-center">
         <div class="max-w-md">
-          <h1 class="text-5xl font-bold">Hello there</h1>
-          <p class="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-          <button class="btn btn-primary">Get Started</button>
+          <h1 class="text-5xl font-bold">Hello to shop</h1>
+          <p class="py-6">Trust your intuition</p>
         </div>
       </div>
     </div>
     <div class="grid grid-cols-4 gap-6 m-10">
-      <div v-for="item in [1,2,3,4,5,6,7,8]"  class="card w-full bg-base-100 shadow-xl">
+      <div v-for="(product, index) in userProductStore.list" class="card w-full bg-base-100 shadow-xl" :key="index">
         <figure>
-          <img src="https://fastly.picsum.photos/id/764/700/400.jpg?hmac=GNDoU-q2GCnxTGcnvDdNXrcRnq34KMc6MMVHoqaFpF0" alt="Shoes" />
+          <img class="w-full" :src="product.imageUrl" alt="Shoes" />
         </figure>
         <div class="card-body">
-          <h2 class="card-title">Shoes!</h2>
-          <p>If a dog chews shoes whose shoes does he choose?</p>
+          <h2 class="card-title">{{ product.name }}</h2>
+          <p>{{ product.about }}</p>
           <div class="card-actions justify-end">
-            <RouterLink to="/cart" class="btn btn-primary">Buy Now</RouterLink>
+            <button @click="addToCart(product)" class="btn btn-primary">Buy Now</button>
           </div>
         </div>
       </div>

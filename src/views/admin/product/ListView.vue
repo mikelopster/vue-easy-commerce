@@ -41,6 +41,7 @@ const removeProduct = (index) => {
                 <tr>
                   <th>Name</th>
                   <th>Image</th>
+                  <th>Price</th>
                   <th>Quantity</th>
                   <th>Status</th>
                   <th>Updated At</th>
@@ -57,6 +58,7 @@ const removeProduct = (index) => {
                       <img :src="product.imageUrl" />
                     </div>
                   </td>
+                  <td>{{ product.price }}</td>
                   <td>{{ product.remainQuantity }} / {{ product.quantity }}</td>
                   <td>
                     <div class="badge" :class="product.status === 'open' ? 'badge-success' : 'badge-error'">

@@ -79,11 +79,24 @@ const updateProduct = () => {
             <div class="form-control w-full">
               <label class="label">
                 <span class="label-text text-base-content">
+                  Price
+                </span>
+              </label>
+              <input
+                type="number"
+                placeholder=""
+                class="input input-bordered w-full"
+                v-model="selectedProduct.price"
+              />
+            </div>
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text text-base-content">
                   Quantity
                 </span>
               </label>
               <input
-                type="text"
+                type="number"
                 placeholder=""
                 class="input input-bordered w-full"
                 v-model="selectedProduct.quantity"
