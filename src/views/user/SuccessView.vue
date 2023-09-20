@@ -41,9 +41,9 @@ onMounted(() => {
         </div>
       </div>
       <div class="divider"></div>
-      <div v-for="product in checkoutData.products" class="flex items-center">
+      <div v-for="(product, index) in checkoutData.products" class="flex items-center" :key="index">
         <div>
-          <img class="w-48" src="https://fastly.picsum.photos/id/1025/300/300.jpg?hmac=4Y_I-JXDyweKiXCJHr7qYyF8RwfblAka9dd1ooCY1fY">
+          <img class="w-48" :src="product.imageUrl">
         </div>
         <div class="flex-1 ml-4">
           <div class="font-bold">{{ product.name }}</div>

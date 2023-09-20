@@ -25,7 +25,7 @@ const addToCart = (productData) => {
 
 <template>
   <UserLayout>
-    <div class="hero min-h-screen bg-base-200">
+    <div class="hero h-96 bg-base-200 bg-image">
       <div class="hero-content text-center">
         <div class="max-w-md">
           <h1 class="text-5xl font-bold">Hello to shop</h1>
@@ -40,3 +40,9 @@ const addToCart = (productData) => {
     </ProductList>
   </UserLayout>
 </template>
+
+<style scoped>
+.bg-image {
+  background-image: url('https://firebasestorage.googleapis.com/v0/b/mikelopster.appspot.com/o/mikelopster-assets%2Fimages%2Fsarah-dorweiler-x2Tmfd1-SgA-unsplash.jpg?alt=media&token=59c90f4b-e815-4051-829c-77b94c251bef')
+}
+</style>
