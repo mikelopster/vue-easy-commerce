@@ -1,17 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import { useUserCartStore } from '@/stores/user/cart'
 import { useAccountStore } from '@/stores/account'
- 
+import { useEventStore } from '@/stores/event'
+
 const searchText = ref('')
-const isLoggedIn = ref(false)
 
 const router = useRouter()
 
 const userCartStore = useUserCartStore()
 const userAccountStore = useAccountStore()
+const eventStore = useEventStore()
 
 const handleEnter = (event) => {
   if (event.key === 'Enter') {
@@ -25,7 +26,12 @@ const handleEnter = (event) => {
 }
 
 const login = async () => {
-  await userAccountStore.signInWithGoogle()
+  try {
+    await userAccountStore.signInWithGoogle()
+  } catch (error) {
+    console.log('error', error)
+    eventStore.popupMessage('error', 'Login failed')
+  }
 }
 
 const logout = async () => {

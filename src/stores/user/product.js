@@ -14,7 +14,6 @@ export const useUserProductStore = defineStore('user-product', {
       const productsCol = collection(db, 'products')
       const productSnapshop = await getDocs(productsCol)
       const productList = productSnapshop.docs.map(doc => doc.data())
-      console.log(productList)
       if (productList && productList.length > 0) {
         this.list = productList
       }

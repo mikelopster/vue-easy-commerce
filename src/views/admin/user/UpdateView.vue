@@ -17,7 +17,6 @@ onMounted(() => {
   if (route.params.id) {
     userId.value = route.params.id
     userData = userStore.getUser(userId.value)
-    console.log('userData', userData)
   }
 })
 

@@ -42,7 +42,8 @@ export const useAccountStore = defineStore('user-account', {
         this.user = result.user
         this.isLoggedIn = true
       } catch (error) {
-        console.log('error', error)
+        console.log('error', error.code)
+        throw new Error('Login invalid')
       }
     },
     async signInAdmin (email, password) {
@@ -52,7 +53,14 @@ export const useAccountStore = defineStore('user-account', {
         this.isAdmin = true
         this.isLoggedIn = true
       } catch (error) {
-        console.log('error', error)
+        switch (error.code) {
+          case 'auth/invalid-email':
+            throw new Error('Invalid email')
+          case 'auth/wrong-password':
+            throw new Error('Wrong password')
+          default:
+            throw new Error('Login invalid')
+        }
       }
     },
     async logout () {
