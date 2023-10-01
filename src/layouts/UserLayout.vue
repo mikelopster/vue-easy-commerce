@@ -1,20 +1,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { useUserCartStore } from '@/stores/user/cart'
 
+import { useUserCartStore } from '@/stores/user/cart'
+import { useAccountStore } from '@/stores/account'
+ 
 const searchText = ref('')
 const isLoggedIn = ref(false)
 
 const router = useRouter()
 
 const userCartStore = useUserCartStore()
-
-onMounted(() => {
-  if (localStorage.getItem('login')) {
-    isLoggedIn.value = true
-  }
-})
+const userAccountStore = useAccountStore()
 
 const handleEnter = (event) => {
   if (event.key === 'Enter') {
@@ -27,17 +24,20 @@ const handleEnter = (event) => {
   }
 }
 
-const login = () => {
-  isLoggedIn.value = true
-  localStorage.setItem('login', true)
+const login = async () => {
+  await userAccountStore.signInWithGoogle()
 }
 
-const logout = () => {
-  isLoggedIn.value = false
-  localStorage.removeItem('login')
-  localStorage.removeItem('cart-item')
-  localStorage.removeItem('checkout-data')
-  window.location.reload()
+const logout = async () => {
+  try {
+    await userAccountStore.logout()
+    localStorage.removeItem('login')
+    localStorage.removeItem('cart-item')
+    localStorage.removeItem('checkout-data')
+    window.location.reload()
+  } catch (error) {
+    console.log('error', error)
+  }
 }
 </script>
 
@@ -76,7 +76,7 @@ const logout = () => {
             </div>
           </div>
         </div>
-        <div v-if="!isLoggedIn" class="btn btn-ghost" @click="login">
+        <div v-if="!userAccountStore.isLoggedIn" class="btn btn-ghost" @click="login">
           Login
         </div>
         <div v-else class="dropdown dropdown-end">

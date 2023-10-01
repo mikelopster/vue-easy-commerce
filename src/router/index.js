@@ -19,6 +19,8 @@ import Success from '@/views/user/SuccessView.vue'
 import Checkout from '@/views/user/CheckoutView.vue'
 import Cart from '@/views/user/CartView.vue'
 
+import { useAccountStore } from '@/stores/account'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -54,7 +56,7 @@ const router = createRouter({
     },
     {
       path: '/admin/login',
-      name: 'admin-login',
+      name: 'login',
       component: AdminLogin
     },
     {
@@ -98,6 +100,23 @@ const router = createRouter({
       component: AdminUserUpdate
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  const userAccountStore = useAccountStore()
+  await userAccountStore.checkAuthState()
+  console.log(to)
+  // console.log(from)
+  console.log('userAccountStore', userAccountStore.isLoggedIn)
+  if ((!userAccountStore.isLoggedIn ||
+      !userAccountStore.isAdmin) &&
+      to.name.includes('admin')) {
+    next({ name: 'home' })
+  } else if (userAccountStore.isAdmin && to.name.includes('login')) {
+    next({ name: 'admin-dashboard' })
+  } else {
+    next()
+  }
 })
 
 export default router
