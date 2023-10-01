@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Product 1",
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mikelopster.appspot.com/o/mikelopster-assets%2Fimages%2Fproduct-01.jpg?alt=media&token=2f014b90-50c8-4aa0-a119-3f02d5abeb9e",
+    "quantity": 20,
+    "about": "First version",
+    "status": "open",
+    "price": 1000,
+    "remainQuantity": 20,
+    "updatedAt": "9/19/2023, 2:26:00 PM"
+  },
+  {
+    "name": "Product 2",
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mikelopster.appspot.com/o/mikelopster-assets%2Fimages%2Fproduct-02.jpg?alt=media&token=72e0126a-e979-4aae-962a-ae4af8eb1e1a",
+    "quantity": 10,
+    "about": "Simple product",
+    "status": "open",
+    "price": 100,
+    "remainQuantity": 10,
+    "updatedAt": "9/19/2023, 2:26:14 PM"
+  },
+  {
+    "name": "Product 3",
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mikelopster.appspot.com/o/mikelopster-assets%2Fimages%2Fproduct-03.jpg?alt=media&token=3a59e3df-f857-441b-8464-697932619b69",
+    "quantity": 10,
+    "about": "Best product ever",
+    "status": "open",
+    "price": 1000,
+    "remainQuantity": 10,
+    "updatedAt": "9/19/2023, 2:26:22 PM"
+  },
+  {
+    "name": "Product 4 (New)",
+    "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mikelopster.appspot.com/o/mikelopster-assets%2Fimages%2Fproduct-04.jpg?alt=media&token=ebefb0aa-8694-4d07-99a9-165b29cd9fb5",
+    "quantity": 10,
+    "about": "the best version",
+    "status": "open",
+    "price": 100,
+    "remainQuantity": 10,
+    "updatedAt": "9/19/2023, 2:26:54 PM"
+  }
+]

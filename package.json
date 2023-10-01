@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "emulator": "firebase emulators:start"
+    "emulator": "firebase emulators:start --import ./firebase-export --export-on-exit ./firebase-export"
   },
   "dependencies": {
     "apexcharts": "^3.42.0",
