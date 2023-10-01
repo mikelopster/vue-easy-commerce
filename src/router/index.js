@@ -103,11 +103,11 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  // auth condition
   const userAccountStore = useAccountStore()
   await userAccountStore.checkAuthState()
-  console.log(to)
-  // console.log(from)
-  console.log('userAccountStore', userAccountStore.isLoggedIn)
+
+  // condition router
   if ((!userAccountStore.isLoggedIn ||
       !userAccountStore.isAdmin) &&
       to.name.includes('admin')) {
