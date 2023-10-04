@@ -8,7 +8,9 @@ import {
   signOut
 } from 'firebase/auth'
 
-import { auth } from '@/firebase'
+import { doc, getDoc, setDoc } from 'firebase/firestore/lite'
+
+import { db, auth } from '@/firebase'
 
 const provider = new GoogleAuthProvider()
 provider.addScope('https://www.googleapis.com/auth/contacts.readonly')
@@ -22,10 +24,25 @@ export const useAccountStore = defineStore('user-account', {
   actions: {
     async checkAuthState () {
       return new Promise((resolve) => {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
           if (user) {
             this.user = user
             this.isLoggedIn = true
+            const docRef = doc(db, 'users', user.uid)
+            const docSnap = await getDoc(docRef)
+
+            if (!docSnap.exists()) {
+              console.log('user not found')
+              console.log('user', user)
+              const userData = {
+                name: user.displayName,
+                role: 'member',
+                status: 'active',
+                updatedAt: new Date()
+              }
+              setDoc(docRef, userData)
+            }
+
             if (this.user.email === 'admin@test.com') {
               this.isAdmin = true
             }

@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+import AdminLayout from '@/layouts/AdminLayout.vue'
+
 import { useUserStore } from '@/stores/admin/user'
 import { useEventStore } from '@/stores/event'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 
 const userStore = useUserStore()
 const eventStore = useEventStore()
@@ -11,18 +13,18 @@ const eventStore = useEventStore()
 const route = useRoute()
 
 const userId = ref(-1)
-let userData = reactive({})
+let userData = ref({})
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.id) {
     userId.value = route.params.id
-    userData = userStore.getUser(userId.value)
+    userData.value = await userStore.getUser(userId.value)
   }
 })
 
 const updateUser = () => {
-  userStore.updateUser(userId.value, userData)
-  eventStore.popupMessage('success', 'Update Product successful!')
+  userStore.updateUser(userId.value, userData.value)
+  eventStore.popupMessage('success', 'Update User successful!')
 }
 
 </script>
