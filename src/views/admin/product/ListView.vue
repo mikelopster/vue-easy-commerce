@@ -1,19 +1,40 @@
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
+
 import { useProductStore } from '@/stores/admin/product'
 import { useEventStore } from '@/stores/event'
-
-import { RouterLink } from 'vue-router'
 
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import TrashIcon from '@/components/icons/Trash.vue'
 import EditIcon from '@/components/icons/Edit.vue'
+import Pagination from '@/components/Pagination.vue'
 
 const productStore = useProductStore()
 const eventStore = useEventStore()
 
-const removeProduct = (index) => {
-  productStore.removeProduct(index)
-  eventStore.popupMessage('success', 'DELETE Successful!')
+onMounted(async () => {
+  await productStore.loadProduct()
+})
+
+const search = async () => {
+  await productStore.loadProduct()
+}
+
+const changePage = async (page) => {
+  const mode = page > productStore.page.activePage ? 'next' : 'previous'
+  productStore.page.activePage = page
+  await productStore.loadNextProduct(mode)
+}
+
+const removeProduct = async (index) => {
+  try {
+    await productStore.removeProduct(productStore.list[index].uid)
+    await productStore.loadProduct()
+    eventStore.popupMessage('success', 'DELETE Successful!')
+  } catch (error) {
+    console.log('error', error)
+  }
 }
 </script>
 <template>
@@ -34,7 +55,32 @@ const removeProduct = (index) => {
           </div>
         </div>
         <div class="divider mt-2"></div>
-        <div class="h-full w-full pb-6 bg-base-100">
+        <div class="flex justify-between">
+          <div class="flex-1">
+            <input v-model="productStore.search.text" placeholder="Type here" class="input input-bordered w-full" />
+          </div>
+          <div class="flex-1 ml-2">
+            Updated at
+            <div class="btn-group">
+              <button
+                class="btn"
+                :class="productStore.search.sort === 'asc' ? 'btn-active' : ''"
+                @click="productStore.changeSortOrder('asc')">
+                ASC
+              </button>
+              <button
+                class="btn"
+                :class="productStore.search.sort === 'desc' ? 'btn-active' : ''"
+                @click="productStore.changeSortOrder('desc')">
+                DESC
+              </button>
+            </div>
+          </div>
+          <div class="flex-1">
+            <button class="btn" @click="search">Search</button>
+          </div>
+        </div>
+        <div class="h-full w-full pb-6 bg-base-100 mt-2">
           <div class="overflow-x-auto w-full">
             <table class="table w-full">
               <thead>
@@ -67,7 +113,7 @@ const removeProduct = (index) => {
                   </td>
                   <td>{{ product.updatedAt }}</td>
                   <td>
-                    <RouterLink :to="{ name: 'admin-products-update', params: { id: index } }">
+                    <RouterLink :to="{ name: 'admin-products-update', params: { id: product.uid } }">
                       <button class="btn btn-square btn-ghost">
                         <EditIcon></EditIcon>
                       </button>
@@ -79,6 +125,11 @@ const removeProduct = (index) => {
                 </tr>
               </tbody>
             </table>
+            <Pagination
+              :maxPage="productStore.totalPage"
+              :activePage="productStore.page.activePage"
+              :changePage="changePage"
+            ></Pagination>
           </div>
         </div>
       </div>

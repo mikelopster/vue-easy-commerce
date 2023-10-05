@@ -28,10 +28,14 @@ const userCartStore = useUserCartStore()
 const userCheckoutData = reactive({})
 const router = useRouter()
 
-const checkout = () => {
+const checkout = async () => {
   // submit checkout data
-  userCartStore.checkout(userCheckoutData)
-  router.push({ name: 'success' })
+  try {
+    await userCartStore.checkout(userCheckoutData)
+    router.push({ name: 'success' })
+  } catch (error) {
+    alert(error.message)
+  }
 }
 </script>
 

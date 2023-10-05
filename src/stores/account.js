@@ -8,7 +8,7 @@ import {
   signOut
 } from 'firebase/auth'
 
-import { doc, getDoc, setDoc } from 'firebase/firestore/lite'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 import { db, auth } from '@/firebase'
 
@@ -19,37 +19,49 @@ export const useAccountStore = defineStore('user-account', {
   state: () => ({
     isLoggedIn: false,
     isAdmin: false,
-    user: {}
+    user: {},
+    profile: {}
   }),
   actions: {
     async checkAuthState () {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            this.user = user
-            this.isLoggedIn = true
-            const docRef = doc(db, 'users', user.uid)
-            const docSnap = await getDoc(docRef)
-
-            if (!docSnap.exists()) {
-              console.log('user not found')
-              console.log('user', user)
-              const userData = {
-                name: user.displayName,
-                role: 'member',
-                status: 'active',
-                updatedAt: new Date()
+          try {
+            if (user) {
+              this.user = user
+              this.isLoggedIn = true
+              const docRef = doc(db, 'users', user.uid)
+              const docSnap = await getDoc(docRef)
+  
+              if (!docSnap.exists()) {
+                console.log('user not found')
+                console.log('user', user)
+                const userData = {
+                  name: user.displayName,
+                  role: 'member',
+                  status: 'active',
+                  updatedAt: new Date()
+                }
+                await setDoc(docRef, userData)
+                this.profile = userData
+              } else {
+                this.profile = docSnap.data()
               }
-              setDoc(docRef, userData)
-            }
 
-            if (this.user.email === 'admin@test.com') {
-              this.isAdmin = true
+              console.log(this.profile.role)
+
+              if (this.profile.role !== 'member') {
+                this.isAdmin = true
+              }
+              resolve(true)
+            } else {
+              resolve(false)
             }
-            resolve(true)
-          } else {
+          } catch (error) {
+            console.log('error', error)
             resolve(false)
           }
+          
         })
       })
     },
