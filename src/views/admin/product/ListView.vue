@@ -76,6 +76,23 @@ const removeProduct = async (index) => {
               </button>
             </div>
           </div>
+          <div class="flex-1 ml-2">
+            Status
+            <div class="btn-group">
+              <button
+                class="btn"
+                :class="productStore.search.status === 'open' ? 'btn-active' : ''"
+                @click="productStore.changeFilterStatus('open')">
+                open
+              </button>
+              <button
+                class="btn"
+                :class="productStore.search.status === 'close' ? 'btn-active' : ''"
+                @click="productStore.changeFilterStatus('close')">
+                close
+              </button>
+            </div>
+          </div>
           <div class="flex-1">
             <button class="btn" @click="search">Search</button>
           </div>

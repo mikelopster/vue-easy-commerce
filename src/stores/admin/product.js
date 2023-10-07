@@ -29,6 +29,7 @@ export const useProductStore = defineStore('product', {
     },
     search: {
       text: '',
+      status: '',
       sort: 'asc'
     }
   }),
@@ -55,6 +56,12 @@ export const useProductStore = defineStore('product', {
           productsCol = query(
             productsCol,
             where('name', '==', this.search.text),
+          )
+        }
+        if (this.search.status) {
+          productsCol = query(
+            productsCol,
+            where('status', '==', this.search.status),
           )
         }
 
@@ -84,6 +91,12 @@ export const useProductStore = defineStore('product', {
         collection(db, 'products'),
         orderBy('updatedAt', this.search.sort),
       )
+      if (this.search.status) {
+        productQuery = query(
+          productQuery,
+          where('status', '==', this.search.status),
+        )
+      }
       if (mode === 'next') {
         const lastDocument = this.docList[this.docList.length - 1]
         productQuery = query(
@@ -149,6 +162,14 @@ export const useProductStore = defineStore('product', {
     async changeSortOrder (newSort) {
       try {
         this.search.sort = newSort
+        await this.loadProduct()
+      } catch (error) {
+        console.log('error', error)
+      }
+    },
+    async changeFilterStatus (newStatus) {
+      try {
+        this.search.status = newStatus
         await this.loadProduct()
       } catch (error) {
         console.log('error', error)
