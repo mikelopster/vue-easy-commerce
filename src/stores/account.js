@@ -8,7 +8,7 @@ import {
   signOut
 } from 'firebase/auth'
 
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
 import { db, auth } from '@/firebase'
 
@@ -32,7 +32,7 @@ export const useAccountStore = defineStore('user-account', {
               this.isLoggedIn = true
               const docRef = doc(db, 'users', user.uid)
               const docSnap = await getDoc(docRef)
-  
+
               if (!docSnap.exists()) {
                 console.log('user not found')
                 console.log('user', user)
@@ -48,6 +48,8 @@ export const useAccountStore = defineStore('user-account', {
                 this.profile = docSnap.data()
               }
 
+              this.profile.email = user.email
+
               console.log(this.profile.role)
 
               if (this.profile.role !== 'member') {
@@ -61,9 +63,20 @@ export const useAccountStore = defineStore('user-account', {
             console.log('error', error)
             resolve(false)
           }
-          
         })
       })
+    },
+    async updateProfile (userData) {
+      try {
+        const updateUserData = {
+          name: userData.name,
+          imageUrl: userData.imageUrl
+        }
+        const userRef = doc(db, 'users', this.user.uid)
+        await updateDoc(userRef, updateUserData)
+      } catch (error) {
+        console.log('error', error)
+      }
     },
     async signInWithGoogle () {
       try {

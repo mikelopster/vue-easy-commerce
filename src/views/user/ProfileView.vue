@@ -1,14 +1,19 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import UserLayout from '@/layouts/UserLayout.vue'
 
 import { useEventStore } from '@/stores/event'
+import { useAccountStore } from '@/stores/account'
+
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { storage } from '@/firebase'
 
 const eventStore = useEventStore()
+const accountStore = useAccountStore()
 
 const userForm = [
-  { name: 'Email', field: 'email' },
-  { name: 'Name', field: 'name' }
+  { name: 'Email', field: 'email', disabled: true },
+  { name: 'Name', field: 'name', disabled: false }
 ]
 
 const userData = reactive({
@@ -18,29 +23,30 @@ const userData = reactive({
 })
 
 onMounted(() => {
-  const savedUserProfile = localStorage.getItem('user-profile')
-  if (savedUserProfile) {
-    const userProfile = JSON.parse(savedUserProfile)
-    userData.imageUrl = userProfile.imageUrl
-    userData.email = userProfile.email
-    userData.name = userProfile.name
-  }
+  const userProfile = accountStore.profile
+  userData.imageUrl = userProfile.imageUrl
+  userData.email = userProfile.email
+  userData.name = userProfile.name
 })
 
-const handleFileChange = (event) => {
+const handleFileChange = async (event) => {
   const file = event.target.files[0]
 
+  console.log(file)
+
   if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      userData.imageUrl = e.target.result
-    }
-    reader.readAsDataURL(file)
+    const storageRef = ref(
+      storage,
+      `users/${accountStore.user.uid}/${file.name}`
+    )
+    const snapshot = await uploadBytes(storageRef, file)
+    const downloadURL = await getDownloadURL(snapshot.ref)
+    userData.imageUrl = downloadURL
   }
 }
 
-const updateProfile = () => {
-  localStorage.setItem('user-profile', JSON.stringify(userData))
+const updateProfile = async () => {
+  await accountStore.updateProfile(userData)
   eventStore.popupMessage('success', 'Update Profile successful!')
 }
 </script>
@@ -70,6 +76,7 @@ const updateProfile = () => {
             placeholder="Type here"
             class="input input-bordered w-full"
             v-model="userData[item.field]"
+            :disabled="item.disabled"
           />
         </div>
 

@@ -4,6 +4,9 @@ import { useProductStore } from '@/stores/admin/product'
 import { useEventStore } from '@/stores/event'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 
+import { ref as storageRef, uploadBytes, getDownloadURL  } from 'firebase/storage'
+import { storage } from '@/firebase'
+
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
 const productStore = useProductStore()
@@ -48,6 +51,23 @@ const updateProduct = async () => {
     console.log('error', error)
   }
 }
+
+const handleFileChange = async (event) => {
+  const file = event.target.files[0]
+
+  console.log(file)
+
+  if (file) {
+    const productRef = storageRef(
+      storage,
+      `products/${productId.value}-${file.name}`
+    )
+    const snapshot = await uploadBytes(productRef, file)
+    const downloadURL = await getDownloadURL(snapshot.ref)
+    selectedProduct.value.imageUrl = downloadURL
+  }
+}
+
 </script>
 
 <template>
@@ -73,11 +93,16 @@ const updateProduct = async () => {
                 <span class="label-text text-base-content">
                   Image
                 </span>
-              </label><input
-                type="text"
+                <div class="avatar">
+                  <div class="w-24 rounded-full">
+                    <img :src="selectedProduct.imageUrl" />
+                  </div>
+                </div>
+              </label>
+              <input
+                type="file"
                 placeholder=""
-                class="input input-bordered w-full"
-                v-model="selectedProduct.imageUrl"
+                @change="handleFileChange"
               />
             </div>
             <div class="form-control w-full">

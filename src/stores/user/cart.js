@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 import {
   doc,
   increment,
-  updateDoc
+  updateDoc,
+  writeBatch
 } from 'firebase/firestore'
 
 import { db } from '@/firebase'
@@ -61,13 +62,15 @@ export const useUserCartStore = defineStore('user-cart', {
 
         console.log(checkout.products)
 
+        const batch = writeBatch(db)
         // workaround (update stock = checkout complete), not write order
         for (const product of checkout.products) {
           const productRef = doc(db, 'products', product.productId)
-          await updateDoc(productRef, {
+          batch.update(productRef, {
             remainQuantity: increment(-1)
           })
         }
+        await batch.commit()
 
         localStorage.setItem('checkout-data', JSON.stringify(checkout))
       } catch (error) {
