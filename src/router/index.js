@@ -20,6 +20,7 @@ import Checkout from '@/views/user/CheckoutView.vue'
 import Cart from '@/views/user/CartView.vue'
 
 import { useAccountStore } from '@/stores/account'
+import { useUserCartStore } from '@/stores/user/cart'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -106,6 +107,10 @@ router.beforeEach(async (to, from, next) => {
   // auth condition
   const userAccountStore = useAccountStore()
   await userAccountStore.checkAuthState()
+
+  // load cart (after check auth)
+  const userCartStore = useUserCartStore()
+  userCartStore.loadCart()
 
   // condition router
   if ((!userAccountStore.isLoggedIn ||

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import { useUserCartStore } from '@/stores/user/cart'
@@ -13,6 +13,10 @@ const router = useRouter()
 const userCartStore = useUserCartStore()
 const userAccountStore = useAccountStore()
 const eventStore = useEventStore()
+
+onMounted(() => {
+  eventStore.loadBanner()
+})
 
 const handleEnter = (event) => {
   if (event.key === 'Enter') {
@@ -37,8 +41,6 @@ const login = async () => {
 const logout = async () => {
   try {
     await userAccountStore.logout()
-    localStorage.removeItem('login')
-    localStorage.removeItem('cart-item')
     localStorage.removeItem('checkout-data')
     window.location.reload()
   } catch (error) {
@@ -104,7 +106,14 @@ const logout = async () => {
         </div>
       </div>
     </div>
+
+    <div v-if="eventStore.banner.display" class="w-full">
+      <a :href="eventStore.banner.link" target="_blank">
+        <img class="w-full" :src="eventStore.banner.imageUrl">
+      </a>
+    </div>
     <slot></slot>
+
     <footer class="footer p-10 bg-neutral text-neutral-content">
       <div>
         <span class="footer-title">Services</span> 
