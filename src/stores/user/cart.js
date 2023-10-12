@@ -46,7 +46,7 @@ export const useUserCartStore = defineStore('user-cart', {
         console.log('test')
         onValue(this.cartRef, (snapshot) => {
           const data = snapshot.val()
-          this.items = data
+          this.items = data || []
           console.log('data', data)
         })
       } else {
