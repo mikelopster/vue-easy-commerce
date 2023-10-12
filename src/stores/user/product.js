@@ -4,7 +4,8 @@ import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  onSnapshot
 } from 'firebase/firestore'
 
 import { db } from '@/firebase'
@@ -19,14 +20,22 @@ export const useUserProductStore = defineStore('user-product', {
   actions: {
     async loadProduct () {
       const productsCol = query(collection(db, 'products'), where('status', '==', 'open'))
-      const productSnapshop = await getDocs(productsCol)
-      const productList = productSnapshop.docs.map(doc => ({
-        productId: doc.id,
-        ...doc.data()
-      }))
-      if (productList && productList.length > 0) {
-        this.list = productList
-      }
+      // const productSnapshop = await getDocs(productsCol)
+      // const productList = productSnapshop.docs.map(doc => ({
+      //   productId: doc.id,
+      //   ...doc.data()
+      // }))
+      // if (productList && productList.length > 0) {
+      //   this.list = productList
+      // }
+
+      onSnapshot(productsCol, (snapshot) => {
+        this.list = snapshot.docs.map(doc => ({
+          productId: doc.id,
+          ...doc.data()
+        }))
+      })
+
       this.loaded = true
     },
     filterProducts (searchName) {
