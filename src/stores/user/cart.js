@@ -20,6 +20,22 @@ import {
 
 import { useAccountStore } from '@/stores/account'
 
+Omise.setPublicKey(import.meta.env.VITE_OMISE_PUBLIC_KEY)
+
+const createSource = (source) => {
+  return new Promise((resolve, reject) => {
+    Omise.createSource('rabbit_linepay', {
+      amount: 400000,
+      currency: 'THB'
+    }, (statusCode, response) => {
+      if (statusCode !== 200) {
+        return reject(response)
+      }
+      resolve(response)
+    })
+  })
+}
+
 export const useUserCartStore = defineStore('user-cart', {
   state: () => ({
     items: [],

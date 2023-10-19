@@ -50,7 +50,7 @@ export const useAccountStore = defineStore('user-account', {
 
               this.profile.email = user.email
 
-              console.log(this.profile.role)
+              console.log('user token 1', this.user.accessToken)
 
               if (this.profile.role !== 'member') {
                 this.isAdmin = true
