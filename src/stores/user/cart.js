@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 import {
+  collection,
+  getDocs,
   doc,
-  increment,
-  updateDoc,
-  writeBatch
+  getDoc
 } from 'firebase/firestore'
 
 import {
@@ -22,10 +23,10 @@ import { useAccountStore } from '@/stores/account'
 
 Omise.setPublicKey(import.meta.env.VITE_OMISE_PUBLIC_KEY)
 
-const createSource = (source) => {
+const createSource = (amount) => {
   return new Promise((resolve, reject) => {
     Omise.createSource('rabbit_linepay', {
-      amount: 400000,
+      amount: (amount * 100),
       currency: 'THB'
     }, (statusCode, response) => {
       if (statusCode !== 200) {
@@ -59,11 +60,9 @@ export const useUserCartStore = defineStore('user-cart', {
   actions: {
     loadCart () {
       if (this.user.uid) {
-        console.log('test')
         onValue(this.cartRef, (snapshot) => {
           const data = snapshot.val()
           this.items = data || []
-          console.log('data', data)
         })
       } else {
         const cartItem = localStorage.getItem('cart-item')
@@ -100,35 +99,41 @@ export const useUserCartStore = defineStore('user-cart', {
       try {
         let checkout = {
           ...checkoutData,
-          totalPrice: this.summaryPrice,
-          paymentMethod: 'Credit Card',
-          createdAt: (new Date()).toLocaleString(),
-          orderNumber: `AA${(Math.floor(Math.random() * 900000) + 100000).toString()}`,
-          products: this.items
+          products: this.items.map(product => ({
+            productId: product.productId,
+            quantity: product.quantity
+          }))
         }
 
-        console.log(checkout.products)
+        const omiseResponse = await createSource(this.summaryPrice)
+        const sourceId = omiseResponse.id
 
-        const batch = writeBatch(db)
-        // workaround (update stock = checkout complete), not write order
-        for (const product of checkout.products) {
-          const productRef = doc(db, 'products', product.productId)
-          batch.update(productRef, {
-            remainQuantity: increment(-1)
-          })
-        }
-        await batch.commit()
-
-        localStorage.setItem('checkout-data', JSON.stringify(checkout))
+        const response = await axios.post('/api/placeorder', {
+          source: sourceId,
+          checkout
+        }, {
+          headers: {
+            'Authorization': this.user.accessToken
+          }
+        })
+        return response.data
       } catch (error) {
         console.log('error', error.code)
         throw new Error('out of stock')
       }
     },
-    loadCheckout () {
-      let checkoutData = localStorage.getItem('checkout-data')
-      if (checkoutData) {
-        this.checkout = JSON.parse(checkoutData)
+    async loadCheckout (orderId) {
+      try {
+        console.log(orderId)
+        const orderRef = doc(db, 'orders', orderId)
+        const docSnap = await getDoc(orderRef)
+        let checkoutData = docSnap.data()
+        checkoutData.orderNumber = orderId
+        checkoutData.createdAt = checkoutData.createdAt.toDate()
+        console.log(checkoutData)
+        this.checkout = checkoutData
+      } catch (error) {
+        console.log('error', error)
       }
     }
   }

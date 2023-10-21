@@ -107,11 +107,6 @@ const logout = async () => {
       </div>
     </div>
 
-    <div v-if="eventStore.banner.display" class="w-full">
-      <a :href="eventStore.banner.link" target="_blank">
-        <img class="w-full" :src="eventStore.banner.imageUrl">
-      </a>
-    </div>
     <slot></slot>
 
     <footer class="footer p-10 bg-neutral text-neutral-content">

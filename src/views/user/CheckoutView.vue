@@ -31,8 +31,15 @@ const router = useRouter()
 const checkout = async () => {
   // submit checkout data
   try {
-    await userCartStore.checkout(userCheckoutData)
-    router.push({ name: 'success' })
+    if (
+      !userCheckoutData.email ||
+      !userCheckoutData.name ||
+      !userCheckoutData.address
+    ) {
+      throw new Error('Please add email, name, address')
+    }
+    const result = await userCartStore.checkout(userCheckoutData)
+    location.href = result.redirectUrl
   } catch (error) {
     alert(error.message)
   }

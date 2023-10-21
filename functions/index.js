@@ -54,10 +54,13 @@ app.post('/placeorder', async (req, res) => {
         }
         summaryPrice += (productData.price * product.quantity)
         transaction.update(productRef, { remainQuantity })
-  
+
         let checkoutProduct = product
         checkoutProduct.price = productData.price
         checkoutProduct.totalPrice = productData.price * product.quantity
+        checkoutProduct.name = productData.name
+        checkoutProduct.about = productData.about
+        checkoutProduct.imageUrl = productData.imageUrl
         checkoutProducts.push(checkoutProduct)
       }
 
@@ -79,7 +82,7 @@ app.post('/placeorder', async (req, res) => {
         email: checkoutData.email,
         name: checkoutData.name,
         address: checkoutData.address,
-        note: checkoutData.note,
+        note: checkoutData.note || '',
         totalPrice: summaryPrice,
         paymentMethod: 'rabbit_linepay',
         createdAt: new Date(),

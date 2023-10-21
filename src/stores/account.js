@@ -34,8 +34,6 @@ export const useAccountStore = defineStore('user-account', {
               const docSnap = await getDoc(docRef)
 
               if (!docSnap.exists()) {
-                console.log('user not found')
-                console.log('user', user)
                 const userData = {
                   name: user.displayName,
                   role: 'member',
@@ -49,8 +47,6 @@ export const useAccountStore = defineStore('user-account', {
               }
 
               this.profile.email = user.email
-
-              console.log('user token 1', this.user.accessToken)
 
               if (this.profile.role !== 'member') {
                 this.isAdmin = true

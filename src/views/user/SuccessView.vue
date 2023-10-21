@@ -1,14 +1,28 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
 import { useUserCartStore } from '@/stores/user/cart'
 import UserLayout from '@/layouts/UserLayout.vue'
 
 const userCartStore = useUserCartStore()
 const checkoutData = ref({})
+const orderId = ref('')
 
-onMounted(() => {
-  userCartStore.loadCheckout()
-  checkoutData.value = userCartStore.checkout
+const route = useRoute()
+
+onMounted(async () => {
+  try {
+    if (!route.query.order_id) {
+      location.href = '/'
+      return false
+    }
+    orderId.value = route.query.order_id
+    await userCartStore.loadCheckout(orderId.value)
+    checkoutData.value = userCartStore.checkout
+  } catch (error) {
+    console.log('error', error)
+  }
 })
 </script>
 
