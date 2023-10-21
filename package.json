@@ -6,14 +6,17 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "emulator": "firebase emulators:start --import ./firebase-export --export-on-exit ./firebase-export"
+    "emulator": "firebase emulators:start --import ./firebase-export --export-on-exit ./firebase-export",
+    "ngrok": "ngrok http 5010"
   },
   "dependencies": {
     "apexcharts": "^3.42.0",
+    "axios": "^1.5.1",
     "firebase": "^10.4.0",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
     "vue-apexcharts": "^1.6.2",
+    "vue-axios": "^3.5.2",
     "vue-router": "^4.2.4",
     "vue3-apexcharts": "^1.4.4"
   },
