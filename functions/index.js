@@ -34,8 +34,11 @@ app.post('/placeorder', async (req, res) => {
   try {
     const idToken = req.headers.authorization
     const checkoutData = req.body.checkout
-    const decodedToken = await auth.verifyIdToken(idToken)
-    console.log('decodedToken', decodedToken.uid)
+    let userUid = ''
+    if (idToken) {
+      const decodedToken = await auth.verifyIdToken(idToken)
+      userUid = decodedToken.uid
+    }
 
     // summary data
     let summaryPrice = 0
@@ -88,7 +91,8 @@ app.post('/placeorder', async (req, res) => {
         createdAt: new Date(),
         products: checkoutProducts,
         status: 'pending',
-        orderId
+        orderId,
+        userUid
       }
 
       transaction.set(orderRef.doc(orderId), orderData)
@@ -126,6 +130,23 @@ app.post('/webhook', async (req, res) => {
         await orderRef.update({
           status: paymentData.status
         })
+
+        if (paymentData.status !== 'successful') {
+          // คืน stock
+          await db.runTransaction(async (transaction) => {
+            for (const product of orderData.products) {
+              const productRef = db.collection('products').doc(product.productId)
+              const snapshot = await transaction.get(productRef)
+              let productData = snapshot.data()
+              productData.remainQuantity += product.quantity
+              transaction.update(productRef, {
+                remainQuantity: productData.remainQuantity
+              })
+            }
+          })
+
+          console.log('restore stock success')
+        }
       }
 
       console.log('success data', {

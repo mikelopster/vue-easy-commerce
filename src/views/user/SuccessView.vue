@@ -14,14 +14,17 @@ const route = useRoute()
 onMounted(async () => {
   try {
     if (!route.query.order_id) {
-      location.href = '/'
-      return false
+      throw new Error('order not found')
     }
     orderId.value = route.query.order_id
     await userCartStore.loadCheckout(orderId.value)
     checkoutData.value = userCartStore.checkout
+
+    // Clear cart
+    userCartStore.clearCart()
   } catch (error) {
     console.log('error', error)
+    location.href = '/'
   }
 })
 </script>

@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 import {
-  collection,
-  getDocs,
   doc,
   getDoc
 } from 'firebase/firestore'
@@ -16,7 +14,8 @@ import {
 import {
   ref,
   set,
-  onValue
+  onValue,
+  remove
 } from 'firebase/database'
 
 import { useAccountStore } from '@/stores/account'
@@ -69,6 +68,12 @@ export const useUserCartStore = defineStore('user-cart', {
         if (cartItem) {
           this.items = JSON.parse(cartItem)
         }
+      }
+    },
+    clearCart () {
+      localStorage.removeItem('cart-item')
+      if (this.user.uid) {
+        remove(this.cartRef)
       }
     },
     async addToCart (productData) {
@@ -133,7 +138,7 @@ export const useUserCartStore = defineStore('user-cart', {
         console.log(checkoutData)
         this.checkout = checkoutData
       } catch (error) {
-        console.log('error', error)
+        throw new Error(error.message)
       }
     }
   }
