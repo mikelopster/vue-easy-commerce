@@ -17,7 +17,7 @@ service cloud.firestore {
 
     match /orders/{orderId} {
       allow list: if isAdmin();
-      allow get: if true;
+      allow get: if (resource.data.status == 'successful' || isAdmin());
       allow write: if false;
     }
   }
