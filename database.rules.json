@@ -1,5 +1,9 @@
 {
   "rules": {
+    "stats": {
+      ".read": "auth != null && auth.isAdmin == true",
+      ".write": false
+    },
     "banner": {
       ".read": true,
       ".write": false
