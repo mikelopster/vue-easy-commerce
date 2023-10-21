@@ -1,10 +1,15 @@
 <script setup>
-import { useOrderStore } from '@/stores/admin/order'
+import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import { useOrderStore } from '@/stores/admin/order'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
 const orderStore = useOrderStore()
+
+onMounted(async () => {
+  await orderStore.loadOrder()
+})
 </script>
 
 <template>
@@ -31,7 +36,7 @@ const orderStore = useOrderStore()
                 <tr v-for="(order, index) in orderStore.list" :key="index">
                   <td>
                     <div class="font-bold">
-                      {{ order.customerName }}
+                      {{ order.name }}
                     </div>
                   </td>
                   <td>{{ order.totalPrice }} ฿</td>
@@ -40,9 +45,9 @@ const orderStore = useOrderStore()
                       {{ order.status }}
                     </div>
                   </td>
-                  <td>{{ order.updatedAt }}</td>
+                  <td>{{ order.createdAt }}</td>
                   <td>
-                    <RouterLink :to="{ name: 'admin-order-detail', params: { id: index }}">
+                    <RouterLink :to="{ name: 'admin-order-detail', params: { id: order.orderId }}">
                       <button class="btn">
                         See detail
                       </button>

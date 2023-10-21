@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted , ref, reactive } from 'vue'
+import { onMounted , ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useOrderStore } from '@/stores/admin/order'
 
@@ -9,14 +9,14 @@ const route = useRoute()
 const orderStore = useOrderStore()
 
 const orderId = ref(-1)
-let orderData = reactive({
+let orderData = ref({
   products: []
 })
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.id) {
     orderId.value = route.params.id
-    orderData = orderStore.getOrder(orderId.value)
+    orderData.value = await orderStore.getOrder(orderId.value)
   }
 })
 </script>

@@ -1,34 +1,38 @@
 import { defineStore } from 'pinia'
 
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc
+} from 'firebase/firestore'
+
+import { db } from '@/firebase'
+
 export const useOrderStore = defineStore('order', {
   state: () => ({
-    list: [{
-      no: 'A112234',
-      customerName: 'นายทดสอบ นะ',
-      totalPrice: '25,000',
-      status: 'Payment Completed',
-      address: '111/892 Nonthaburi Thailand 99999',
-      paymentMethod: 'Credit card',
-      updatedAt: '9/15/2023, 11:50:24 PM',
-      products: [{
-        name: 'ทดสอบ',
-        description: 'รายละเอียดสินค้า 1',
-        imageUrl: 'https://fastly.picsum.photos/id/928/200/200.jpg?hmac=5MQxbf-ANcu87ZaOn5sOEObpZ9PpJfrOImdC7yOkBlg',
-        quantity: 1,
-        price: '13,000'
-      },
-      {
-        name: 'ทดสอบ 2',
-        description: 'รายละเอียดสินค้า 2',
-        imageUrl: 'https://fastly.picsum.photos/id/59/200/200.jpg?hmac=q9DbuoFh1L_NWnGk3AGdzuEOlg5bBW4JmBSgWmQdT74',
-        quantity: 1,
-        price: '12,000'
-      }]
-    }]
+    list: []
   }),
   actions: {
-    getOrder (index) {
-      return this.list[index]
+    async loadOrder () {
+      const orderRef = collection(db, 'orders')
+      const orderSnapshot = await getDocs(orderRef)
+      const orderList = orderSnapshot.docs.map(doc => {
+        let convertedData = doc.data()
+        convertedData.createdAt = convertedData.createdAt.toDate()
+        convertedData.orderId = doc.id
+        return convertedData
+      })
+      this.list = orderList
+    },
+    async getOrder (orderId) {
+      try {
+        const orderRef = doc(db, 'orders', orderId)
+        const orderSnapshot = await getDoc(orderRef)
+        return orderSnapshot.data()
+      } catch (error) {
+        console.log('error', error)
+      }
     }
   }
 })

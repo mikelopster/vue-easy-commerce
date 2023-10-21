@@ -49,7 +49,7 @@ app.post('/placeorder', async (req, res) => {
     await db.runTransaction(async (transaction) => {
       for (const product of checkoutData.products) {
         const productRef = db.collection('products').doc(product.productId)
-        const snapshot = await transaction.get(productRef)
+        const snapshot = await productRef.get()
         const productData = snapshot.data()
         const remainQuantity = productData.remainQuantity - product.quantity
         if (remainQuantity < 0) {
