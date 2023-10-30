@@ -13,12 +13,12 @@ const auth = getAuth()
 const realtimeDB = getDatabase()
 const storage = getStorage()
 
-// if (import.meta.env.DEV) {
-//   connectFirestoreEmulator(db, '127.0.0.1', 8080)
-//   connectAuthEmulator(auth, 'http://127.0.0.1:9099')
-//   connectStorageEmulator(storage, '127.0.0.1', 9199)
-//   connectDatabaseEmulator(realtimeDB, '127.0.0.1', 9000)
-// }
+if (import.meta.env.DEV) {
+  connectFirestoreEmulator(db, '127.0.0.1', 8080)
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099')
+  connectStorageEmulator(storage, '127.0.0.1', 9199)
+  connectDatabaseEmulator(realtimeDB, '127.0.0.1', 9000)
+}
 
 export {
   db,
