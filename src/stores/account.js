@@ -50,6 +50,8 @@ export const useAccountStore = defineStore('user-account', {
 
               if (this.profile.role !== 'member') {
                 this.isAdmin = true
+                const idToken = await auth.currentUser.getIdToken(true)
+                console.log('idToken', idToken)
               }
               resolve(true)
             } else {

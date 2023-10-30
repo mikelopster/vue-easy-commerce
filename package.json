@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "firebase deploy --only hosting",
     "preview": "vite preview",
     "emulator": "firebase emulators:start --import ./firebase-export --export-on-exit ./firebase-export",
+    "emulator-function": "firebase emulators:start --only functions",
     "ngrok": "ngrok http 5010"
   },
   "dependencies": {

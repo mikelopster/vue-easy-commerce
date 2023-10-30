@@ -16,7 +16,7 @@ const createCharge = (source, amount, orderId) => {
     omise.charges.create({
       amount: (amount * 100),
       currency: 'THB',
-      return_uri: `http://localhost:5173/success?order_id=${orderId}`,
+      return_uri: `${process.env.SUCCESS_DOMAIN}/success?order_id=${orderId}`,
       metadata: {
         orderId
       },
@@ -30,7 +30,7 @@ const createCharge = (source, amount, orderId) => {
   })
 }
 
-app.post('/placeorder', async (req, res) => {
+app.post('/api/placeorder', async (req, res) => {
   try {
     const idToken = req.headers.authorization
     const checkoutData = req.body.checkout
@@ -110,7 +110,7 @@ app.post('/placeorder', async (req, res) => {
   }
 })
 
-app.post('/webhook', async (req, res) => {
+app.post('/api/webhook', async (req, res) => {
   try {
     if (req.body.key === 'charge.complete') {
       const paymentData = req.body.data
@@ -156,6 +156,42 @@ app.post('/webhook', async (req, res) => {
     }
   } catch (error) {
     console.log('error', error)
+  }
+})
+
+app.get('/api/test', async (req, res) => {
+  const userRef = db.collection('users')
+  const userSnapshot = await userRef.get()
+
+  const statRef = realtimeDB.ref('stats')
+  const statSnapshot = await statRef.get()
+  res.json({
+    users: userSnapshot.docs.map(user => user.data()),
+    stats: statSnapshot.val()
+  })
+})
+
+app.get('/api/set-admin', async (req, res) => {
+  try {
+    const idToken = req.headers.authorization
+    let userUid = ''
+
+    console.log('idToken', idToken)
+    if (idToken) {
+      const decodedToken = await auth.verifyIdToken(idToken)
+      userUid = decodedToken.uid
+      console.log('userUid', userUid)
+      // add for set customClaim in Firebase Authentication
+      await auth.setCustomUserClaims(userUid, { isAdmin: true })
+    }
+
+    res.json({
+      message: `${userUid} is admin right now!`
+    })
+  } catch (error) {
+    res.status(404).json({
+      message: error.message
+    })
   }
 })
 
